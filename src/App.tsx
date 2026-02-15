@@ -14,6 +14,7 @@ import PlanTomorrow from "@/pages/PlanTomorrow";
 import Reviews from "@/pages/Reviews";
 import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
+import Install from "@/pages/Install";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ function ProtectedRoutes() {
         <Route path="/plan-tomorrow" element={<PlanTomorrow />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/install" element={<Install />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>
