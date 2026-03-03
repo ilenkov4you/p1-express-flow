@@ -88,17 +88,18 @@ export default function TaskCard({ task }: TaskCardProps) {
       </div>
 
       <div className="flex items-center gap-1 shrink-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          title={t("edit")}
+          onClick={() => setEditing(true)}
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </Button>
+
         {isActive && (
           <>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              title={t("edit")}
-              onClick={() => setEditing(true)}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
             {task.status === "postponed" && (
               <Button
                 variant="ghost"
