@@ -1,9 +1,11 @@
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTasks } from "@/hooks/useTasks";
 import type { Task } from "@/lib/tasks";
 import PostponePopover from "./PostponePopover";
-import { Check, X, Clock, Play, Repeat } from "lucide-react";
+import { Check, X, Clock, Play, Repeat, Pencil } from "lucide-react";
 
 interface TaskCardProps {
   task: Task;
@@ -11,9 +13,67 @@ interface TaskCardProps {
 
 export default function TaskCard({ task }: TaskCardProps) {
   const { t } = useLanguage();
-  const { updateStatus, postpone } = useTasks();
+  const { updateStatus, postpone, updateTitle, updateNotes } = useTasks();
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
+  const [editNotes, setEditNotes] = useState(task.notes || "");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const isActive = task.status === "doing" || task.status === "postponed";
+
+  useEffect(() => {
+    if (editing) inputRef.current?.focus();
+  }, [editing]);
+
+  const saveEdit = () => {
+    const trimmed = editTitle.trim();
+    if (trimmed.length < 2) return;
+    if (trimmed !== task.title) updateTitle({ taskId: task.id, title: trimmed });
+    const notesTrimmed = editNotes.trim();
+    if (notesTrimmed !== (task.notes || "")) updateNotes({ taskId: task.id, notes: notesTrimmed });
+    setEditing(false);
+  };
+
+  const cancelEdit = () => {
+    setEditTitle(task.title);
+    setEditNotes(task.notes || "");
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="rounded-lg border bg-card p-3 space-y-2">
+        <Input
+          ref={inputRef}
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") saveEdit();
+            if (e.key === "Escape") cancelEdit();
+          }}
+          className="h-8 text-sm"
+        />
+        <Input
+          value={editNotes}
+          onChange={(e) => setEditNotes(e.target.value)}
+          placeholder={t("notes") || "Notes"}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") saveEdit();
+            if (e.key === "Escape") cancelEdit();
+          }}
+          className="h-8 text-sm"
+        />
+        <div className="flex gap-1 justify-end">
+          <Button variant="ghost" size="sm" onClick={cancelEdit} className="h-7 px-2 text-xs">
+            {t("cancel")}
+          </Button>
+          <Button size="sm" onClick={saveEdit} className="h-7 px-2 text-xs">
+            {t("save")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group flex items-start gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-accent/50">
@@ -27,44 +87,55 @@ export default function TaskCard({ task }: TaskCardProps) {
         )}
       </div>
 
-      {isActive && (
-        <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-          {task.status === "postponed" && (
+      <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        {isActive && (
+          <>
             <Button
               variant="ghost"
               size="icon"
               className="h-7 w-7"
-              title={t("doToday")}
-              onClick={() => updateStatus({ task, newStatus: "doing" })}
+              title={t("edit")}
+              onClick={() => setEditing(true)}
             >
-              <Play className="h-3.5 w-3.5" />
+              <Pencil className="h-3.5 w-3.5" />
             </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-primary"
-            title={t("finish")}
-            onClick={() => updateStatus({ task, newStatus: "finished" })}
-          >
-            <Check className="h-3.5 w-3.5" />
-          </Button>
-          <PostponePopover onPostpone={(date) => postpone({ task, date })}>
-            <Button variant="ghost" size="icon" className="h-7 w-7" title={t("postpone")}>
-              <Clock className="h-3.5 w-3.5" />
+            {task.status === "postponed" && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                title={t("doToday")}
+                onClick={() => updateStatus({ task, newStatus: "doing" })}
+              >
+                <Play className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-primary"
+              title={t("finish")}
+              onClick={() => updateStatus({ task, newStatus: "finished" })}
+            >
+              <Check className="h-3.5 w-3.5" />
             </Button>
-          </PostponePopover>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-destructive"
-            title={t("cancel")}
-            onClick={() => updateStatus({ task, newStatus: "canceled" })}
-          >
-            <X className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      )}
+            <PostponePopover onPostpone={(date) => postpone({ task, date })}>
+              <Button variant="ghost" size="icon" className="h-7 w-7" title={t("postpone")}>
+                <Clock className="h-3.5 w-3.5" />
+              </Button>
+            </PostponePopover>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-destructive"
+              title={t("cancel")}
+              onClick={() => updateStatus({ task, newStatus: "canceled" })}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
