@@ -81,6 +81,15 @@ export default function TaskCard({ task }: TaskCardProps) {
         <div className="flex items-center gap-2">
           {task.is_recurring && <Repeat className="h-3 w-3 text-muted-foreground shrink-0" />}
           <span className="text-sm leading-tight">{task.title}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 ml-auto md:hidden"
+            title={t("edit")}
+            onClick={() => setEditing(true)}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
         </div>
         {task.notes && (
           <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{task.notes}</p>
@@ -91,7 +100,7 @@ export default function TaskCard({ task }: TaskCardProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className="hidden h-7 w-7 md:inline-flex"
           title={t("edit")}
           onClick={() => setEditing(true)}
         >
