@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTasks } from "@/hooks/useTasks";
 import { Plus } from "lucide-react";
@@ -35,6 +36,16 @@ export default function QuickCapture({ date, status }: QuickCaptureProps) {
           autoComplete="off"
         />
       </div>
+      <Button
+        type="submit"
+        size="icon"
+        disabled={title.trim().length < 2}
+        aria-label={t("addTask")}
+        title={t("addTask")}
+        className="shrink-0"
+      >
+        <Plus className="h-4 w-4" />
+      </Button>
     </form>
   );
 }
