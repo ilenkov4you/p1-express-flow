@@ -3,8 +3,14 @@ import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTasks } from "@/hooks/useTasks";
 import { Plus } from "lucide-react";
+import type { TaskStatus } from "@/lib/tasks";
 
-export default function QuickCapture() {
+interface QuickCaptureProps {
+  date?: string;
+  status?: TaskStatus;
+}
+
+export default function QuickCapture({ date, status }: QuickCaptureProps) {
   const [title, setTitle] = useState("");
   const { t } = useLanguage();
   const { create } = useTasks();
@@ -13,7 +19,7 @@ export default function QuickCapture() {
     e.preventDefault();
     const trimmed = title.trim();
     if (trimmed.length < 2) return;
-    create({ title: trimmed });
+    create({ title: trimmed, date, status });
     setTitle("");
   };
 

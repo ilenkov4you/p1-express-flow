@@ -52,14 +52,15 @@ export async function createTask(
   title: string,
   date?: string,
   isRecurring = false,
-  recurrenceRule?: RecurrenceRule
+  recurrenceRule?: RecurrenceRule,
+  status: TaskStatus = "postponed"
 ) {
   const { data, error } = await supabase
     .from("tasks")
     .insert({
       user_id: userId,
       title,
-      status: "postponed" as TaskStatus,
+      status: status as TaskStatus,
       date: date || today(),
       is_recurring: isRecurring,
       recurrence_rule: recurrenceRule as any,
