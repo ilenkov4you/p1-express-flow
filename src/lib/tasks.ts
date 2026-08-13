@@ -113,7 +113,7 @@ export async function updateTaskStatus(
     return;
   }
 
-  const updateData: Record<string, any> = {
+  const updateData: Partial<Task> = {
     status: newStatus,
     history: updatedHistory as any,
   };
