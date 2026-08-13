@@ -33,13 +33,15 @@ export function useTasks() {
       date?: string;
       isRecurring?: boolean;
       recurrenceRule?: RecurrenceRule;
+      status?: TaskStatus;
     }) =>
       createTask(
         user!.id,
         args.title,
         args.date,
         args.isRecurring,
-        args.recurrenceRule
+        args.recurrenceRule,
+        args.status
       ),
     onSuccess: invalidate,
     onError: () => toast.error(t("error")),

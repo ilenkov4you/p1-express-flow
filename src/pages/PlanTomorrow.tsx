@@ -3,6 +3,7 @@ import { format, addDays } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTasks } from "@/hooks/useTasks";
 import TaskCard from "@/components/tasks/TaskCard";
+import QuickCapture from "@/components/tasks/QuickCapture";
 import { Button } from "@/components/ui/button";
 
 export default function PlanTomorrow() {
@@ -39,6 +40,9 @@ export default function PlanTomorrow() {
         <h1 className="text-lg font-semibold">{t("planTomorrowTitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("planTomorrowDesc")}</p>
       </div>
+
+      {/* Quick capture for tomorrow */}
+      <QuickCapture date={tomorrowStr} status="postponed" />
 
       {/* Unfinished from today */}
       {unfinishedToday.length > 0 && (
